@@ -1,0 +1,50 @@
+<svg width="900" height="700" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .box { fill: #f9f9f9; stroke: #333; stroke-width: 1; }
+    .title { font-size: 16px; font-weight: bold; }
+    .text { font-size: 12px; }
+  </style>
+
+  <text x="20" y="30" class="title">Teaching-First Multi-Streaming Platform – High-Level Architecture</text>
+
+  <!-- Client Layer -->
+  <rect x="20" y="60" width="250" height="120" class="box"/>
+  <text x="30" y="80" class="title">Client Layer</text>
+  <text x="30" y="100" class="text">Teacher UI</text>
+  <text x="30" y="115" class="text">Student UI</text>
+  <text x="30" y="130" class="text">Assistant UI</text>
+  <text x="30" y="145" class="text">Public Viewer</text>
+
+  <!-- API Gateway -->
+  <rect x="320" y="60" width="250" height="80" class="box"/>
+  <text x="330" y="90" class="title">API Gateway / BFF</text>
+  <text x="330" y="110" class="text">Auth, Routing, Rate Limits</text>
+
+  <!-- Control Plane -->
+  <rect x="620" y="60" width="250" height="200" class="box"/>
+  <text x="630" y="80" class="title">Control Plane</text>
+  <text x="630" y="100" class="text">Identity & Roles</text>
+  <text x="630" y="115" class="text">Classroom Orchestrator</text>
+  <text x="630" y="130" class="text">Studio State</text>
+  <text x="630" y="145" class="text">Interaction Service</text>
+  <text x="630" y="160" class="text">Artifact Generator</text>
+  <text x="630" y="175" class="text">Analytics</text>
+  <text x="630" y="190" class="text">Integration Gateway</text>
+
+  <!-- Media Plane -->
+  <rect x="320" y="200" width="250" height="140" class="box"/>
+  <text x="330" y="220" class="title">Media Plane</text>
+  <text x="330" y="240" class="text">WebRTC SFU</text>
+  <text x="330" y="255" class="text">Composer / Encoder</text>
+  <text x="330" y="270" class="text">Recorder</text>
+  <text x="330" y="285" class="text">Multistream Fan-out</text>
+
+  <!-- Data Plane -->
+  <rect x="20" y="220" width="250" height="140" class="box"/>
+  <text x="30" y="240" class="title">Data Plane</text>
+  <text x="30" y="260" class="text">PostgreSQL (truth)</text>
+  <text x="30" y="275" class="text">Redis (ephemeral)</text>
+  <text x="30" y="290" class="text">Object Storage</text>
+  <text x="30" y="305" class="text">Search Index</text>
+
+</svg>
