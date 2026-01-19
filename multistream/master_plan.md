@@ -184,3 +184,5 @@ Use `feature_backend_mapping.md` as the source of truth. Enforce:
 3. Schema matches `strategy_upgrade/teaching_first_database_schema.md`.
 4. Artifact pipeline matches `strategy_upgrade/teaching_first_artifact_pipeline.md`.
 5. Local stack runs with managed LiveKit and passing tests.
+
+PD: Look up (https://support.restream.io/en/) documentation for reference.
