@@ -1,16 +1,17 @@
 # Master Build Plan - Teaching-First Multi-Streaming Platform
-#
-The Antigravity-X Hybrid (CodeX Corrections)"
-#
+
+The Antigravity-X Hybrid (CodeX Corrections)
+
 This plan keeps the Next.js + LiveKit + Python stack from Antigravity, while
- applying CodeX's correctness, failure-mode, and ops requirements.
+applying CodeX's correctness, failure-mode, and ops requirements.
+Note: This file is the original master plan; the supporting specs were split out solely to improve readability.
 
 ## 0) Decisions and scope lock
 1. **Media plane**: LiveKit (managed cloud by default; self-hosted optional later).
 2. **Core stack**:
    - Full stack: Next.js 15 (App Router) + TypeScript.
    - Data: PostgreSQL + Drizzle ORM + Redis + S3-compatible storage.
-   - AI/artifacts: Python (FastAPI) + Celery/RQ (Redis-backed jobs).
+   - AI/artifacts: Python (FastAPI) + Celery (Redis-backed jobs).
 3. **Authoritative state**: `session_state_events` is the source of truth.
    - All state-changing actions must write to the event log first (or in the same transaction) before broadcasting to clients.
 4. **Deliverables**:
@@ -27,7 +28,7 @@ This plan keeps the Next.js + LiveKit + Python stack from Antigravity, while
    - `packages/db`: Drizzle schema + migrations.
    - `packages/shared`: shared types, validators, API contracts.
    - `infra`: docker-compose and scripts.
-2. **Tooling**: ESLint, Prettier, Vitest/Jest, Playwright.
+2. **Tooling**: ESLint, Prettier, Vitest, Playwright.
 3. **CI**: lint + typecheck + tests.
 
 ## 2) Local infrastructure (managed LiveKit)
@@ -41,7 +42,7 @@ This plan keeps the Next.js + LiveKit + Python stack from Antigravity, while
    - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`.
 
 ## 3) Database schema (Drizzle ORM)
-1. Implement schema from `teaching_first_database_schema.md`:
+1. Implement schema from `multistream/docs/master_plan_complement/teaching_first_database_schema.md`:
    - Tenancy: `tenants`, `tenant_domains`.
    - Identity: `users`, `roles`, `user_roles`.
    - Classroom: `courses`, `lessons`, `sessions`, `session_participants`.
@@ -63,7 +64,7 @@ This plan keeps the Next.js + LiveKit + Python stack from Antigravity, while
    - Write to event log first, then publish to WebSocket/LiveKit data channels.
 
 ## 5) Identity & auth (teaching-first)
-1. Provider: Auth.js/NextAuth or Clerk.
+1. Provider: Clerk.
 2. RBAC: enforce `user_roles` and session-scoped permissions.
 3. Audit logs for role changes and permission overrides.
 
@@ -103,7 +104,7 @@ This plan keeps the Next.js + LiveKit + Python stack from Antigravity, while
 3. Webhook signature validation required.
 
 ## 10) Artifact pipeline (Python engine)
-1. Queue: Python-native (Celery/RQ) with Redis backend.
+1. Queue: Celery with Redis backend.
 2. API trigger: Next.js posts a job request to FastAPI, which enqueues.
 3. Pipeline stages:
    - Extraction: ASR transcription from recordings.
@@ -115,11 +116,11 @@ This plan keeps the Next.js + LiveKit + Python stack from Antigravity, while
    - Event capture failure halts class.
 
 ## 11) Failure behavior matrix (sync vs async)
-Use `feature_backend_mapping.md` as the source of truth. Enforce:
+Use `multistream/docs/master_plan_complement/feature_backend_mapping.md` as the source of truth. Enforce:
 - Scheduling/joining/permissions/recording: synchronous, hard-fail on error.
 - Scenes/slides/whiteboard: synchronous with safe fallback to last known state.
 - Chat/Q&A/polls/captions/notes/chapters/highlights: asynchronous, degrade gracefully.
-- Replays/multistreaming: asynchronous, replay may be delayed if needed.
+- Replays/multistreaming: asynchronous; multistreaming to external destinations is Phase 2.
 - CTAs/QR codes: synchronous with fallback to static CTA.
 
 ## 12) Replay service & UX
@@ -179,10 +180,10 @@ Use `feature_backend_mapping.md` as the source of truth. Enforce:
 5. M5: Replay UX and compliance hardening.
 
 ## 18) Definition of done
-1. All core flows match `strategy_upgrade/master_specification.md`.
-2. Feature ownership and failure behavior match `strategy_upgrade/feature_backend_mapping.md`.
-3. Schema matches `strategy_upgrade/teaching_first_database_schema.md`.
-4. Artifact pipeline matches `strategy_upgrade/teaching_first_artifact_pipeline.md`.
+1. All core flows match `multistream/docs/master_plan_complement/master_specification.md`.
+2. Feature ownership and failure behavior match `multistream/docs/master_plan_complement/feature_backend_mapping.md`.
+3. Schema matches `multistream/docs/master_plan_complement/teaching_first_database_schema.md`.
+4. Artifact pipeline matches `multistream/docs/master_plan_complement/teaching_first_artifact_pipeline.md`.
 5. Local stack runs with managed LiveKit and passing tests.
 
-PD: Look up (https://support.restream.io/en/) documentation for reference.
+Note: Restream support docs are Phase 2 reference only and not required for MVP.

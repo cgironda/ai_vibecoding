@@ -1,6 +1,8 @@
 # feature_backend_mapping.md
 ## Feature → Backend Mapping (Draft)
 
+This file was split out from `multistream/docs/master_plan.md` solely to improve readability.
+
 This document maps every user-facing feature to a single owning service, its source-of-truth data, sync vs async behavior, and failure mode expectations.
 
 | Feature | Owning Service | Source of Truth | Sync/Async | Failure Behavior |
@@ -20,7 +22,7 @@ This document maps every user-facing feature to a single owning service, its sou
 | Replays | Replay & Knowledge UX | `replays` | Async | Degrade: replay delayed |
 | Chapters | Artifact Generator | `artifacts` | Async | Degrade: replay missing chapters |
 | Highlights | Artifact Generator | `artifacts` | Async | Degrade: replay missing highlights |
-| Multistreaming | Media Plane / Fan-out | `session_destinations` | Async | Degrade: class continues |
+| Multistreaming | Media Plane / Fan-out | `session_destinations` | Async (Phase 2) | Degrade: class continues (Phase 2) |
 | CTAs / QR Codes | Classroom Orchestrator | `session_state_events` | Sync | Degrade: fallback to static CTA |
 
 ---
@@ -30,3 +32,4 @@ This document maps every user-facing feature to a single owning service, its sou
 - **Single ownership** is mandatory: every feature is managed by one service only.
 - **Source-of-truth** is either a relational table or the event log; caches must not diverge.
 - **Failure behavior** follows teaching-first rules: if it impacts classroom continuity, it is critical; otherwise, it must degrade gracefully.
+- **Multistreaming** to external destinations is Phase 2 and not required for MVP.

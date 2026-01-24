@@ -1,0 +1,813 @@
+openapi: 3.0.3
+info:
+  title: Teaching-First Multi-Streaming Platform API
+  version: 0.1.0
+  description: >
+    Canonical API specification for the teaching-first multi-streaming platform.
+    This spec covers the core session lifecycle, studio state, interactions,
+    replay access, and internal artifact processing triggers.
+servers:
+  - url: http://localhost:3000
+    description: Local dev (Next.js)
+  - url: https://api.example.com
+    description: Production (placeholder)
+tags:
+  - name: auth
+  - name: sessions
+  - name: studio
+  - name: interaction
+  - name: replays
+  - name: artifacts
+  - name: webhooks
+
+paths:
+  /api/auth/login:
+    post:
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /api/auth/logout:
+    post:
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logout success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+  /api/auth/me:
+    get:
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthMeResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/sessions:
+    post:
+      tags: [sessions]
+      summary: Create or schedule a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "200":
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/sessions/start:
+    post:
+      tags: [sessions]
+      summary: Start a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartSessionRequest"
+      responses:
+        "200":
+          description: Session started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionStartResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/sessions/join:
+    post:
+      tags: [sessions]
+      summary: Join a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinSessionRequest"
+      responses:
+        "200":
+          description: Session joined
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionJoinResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/sessions/end:
+    post:
+      tags: [sessions]
+      summary: End a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EndSessionRequest"
+      responses:
+        "200":
+          description: Session ended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/studio/scenes:
+    post:
+      tags: [studio]
+      summary: Create a scene
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSceneRequest"
+      responses:
+        "200":
+          description: Scene created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SceneResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/studio/scenes/{sceneId}:
+    patch:
+      tags: [studio]
+      summary: Update a scene
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sceneId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSceneRequest"
+      responses:
+        "200":
+          description: Scene updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SceneResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/studio/assets:
+    post:
+      tags: [studio]
+      summary: Create or upload a studio asset
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssetRequest"
+      responses:
+        "200":
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/chat:
+    post:
+      tags: [interaction]
+      summary: Send a chat message
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatMessageRequest"
+      responses:
+        "200":
+          description: Message created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/questions:
+    post:
+      tags: [interaction]
+      summary: Ask a question
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionRequest"
+      responses:
+        "200":
+          description: Question created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/polls:
+    post:
+      tags: [interaction]
+      summary: Create a poll
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PollRequest"
+      responses:
+        "200":
+          description: Poll created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PollResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/replays/{sessionId}:
+    get:
+      tags: [replays]
+      summary: Fetch replay metadata and artifacts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Replay data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReplayResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/artifacts/process:
+    post:
+      tags: [artifacts]
+      summary: Trigger artifact processing (internal)
+      description: Internal endpoint used by the artifact engine.
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArtifactProcessRequest"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+
+  /api/webhooks/livekit:
+    post:
+      tags: [webhooks]
+      summary: LiveKit webhook handler
+      description: Verifies signature and persists authoritative events.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LiveKitWebhookEvent"
+      responses:
+        "200":
+          description: Webhook received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: Required for all write endpoints. If omitted, idempotencyKey in the body is accepted.
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        requestId:
+          type: string
+          format: uuid
+      required: [code, message]
+
+    StatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required: [token]
+
+    AuthMeResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        roles:
+          type: array
+          items:
+            type: string
+      required: [user, roles]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenantId:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+      required: [id, tenantId, email]
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lessonId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [scheduled, live, ended, archived]
+        scheduledStart:
+          type: string
+          format: date-time
+        scheduledEnd:
+          type: string
+          format: date-time
+      required: [id, lessonId, status]
+
+    Participant:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [teacher, student, assistant]
+      required: [userId, role]
+
+    Scene:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sessionId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        layout:
+          type: object
+          additionalProperties: true
+      required: [id, sessionId, name, layout]
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        lessonId:
+          type: string
+          format: uuid
+        scheduledStart:
+          type: string
+          format: date-time
+        scheduledEnd:
+          type: string
+          format: date-time
+        idempotencyKey:
+          type: string
+      required: [lessonId, scheduledStart, scheduledEnd]
+
+    StartSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        idempotencyKey:
+          type: string
+      required: [sessionId]
+
+    JoinSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        idempotencyKey:
+          type: string
+      required: [sessionId]
+
+    EndSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        idempotencyKey:
+          type: string
+      required: [sessionId]
+
+    SessionResponse:
+      type: object
+      properties:
+        session:
+          $ref: "#/components/schemas/Session"
+      required: [session]
+
+    SessionStartResponse:
+      type: object
+      properties:
+        session:
+          $ref: "#/components/schemas/Session"
+        livekitToken:
+          type: string
+      required: [session, livekitToken]
+
+    SessionJoinResponse:
+      type: object
+      properties:
+        session:
+          $ref: "#/components/schemas/Session"
+        participant:
+          $ref: "#/components/schemas/Participant"
+        livekitToken:
+          type: string
+      required: [session, participant, livekitToken]
+
+    CreateSceneRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        layout:
+          type: object
+          additionalProperties: true
+        idempotencyKey:
+          type: string
+      required: [sessionId, name, layout]
+
+    UpdateSceneRequest:
+      type: object
+      properties:
+        layout:
+          type: object
+          additionalProperties: true
+        idempotencyKey:
+          type: string
+      required: [layout]
+
+    SceneResponse:
+      type: object
+      properties:
+        scene:
+          $ref: "#/components/schemas/Scene"
+      required: [scene]
+
+    CreateAssetRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [slide, whiteboard, media]
+        idempotencyKey:
+          type: string
+      required: [sessionId, type]
+
+    AssetResponse:
+      type: object
+      properties:
+        assetId:
+          type: string
+          format: uuid
+        contentUrl:
+          type: string
+      required: [assetId, contentUrl]
+
+    ChatMessageRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        idempotencyKey:
+          type: string
+      required: [sessionId, content]
+
+    MessageResponse:
+      type: object
+      properties:
+        messageId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+      required: [messageId, createdAt]
+
+    QuestionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        idempotencyKey:
+          type: string
+      required: [sessionId, content]
+
+    QuestionResponse:
+      type: object
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+      required: [questionId, createdAt]
+
+    PollRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        prompt:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        idempotencyKey:
+          type: string
+      required: [sessionId, prompt, options]
+
+    PollResponse:
+      type: object
+      properties:
+        pollId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+      required: [pollId, createdAt]
+
+    ReplayResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        recordingUrl:
+          type: string
+        transcriptUrl:
+          type: string
+        chapters:
+          type: array
+          items:
+            $ref: "#/components/schemas/Chapter"
+        highlights:
+          type: array
+          items:
+            $ref: "#/components/schemas/Highlight"
+      required: [sessionId]
+
+    Chapter:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        startTime:
+          type: number
+        endTime:
+          type: number
+      required: [id, title, startTime]
+
+    Highlight:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        startTime:
+          type: number
+        endTime:
+          type: number
+      required: [id, title, startTime]
+
+    ArtifactProcessRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        recordingUrl:
+          type: string
+        idempotencyKey:
+          type: string
+      required: [sessionId, recordingUrl]
+
+    LiveKitWebhookEvent:
+      type: object
+      additionalProperties: true

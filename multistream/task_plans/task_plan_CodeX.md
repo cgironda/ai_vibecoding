@@ -23,7 +23,7 @@ What to produce (in this order):
    - Service boundaries (Identity & Roles, Classroom Orchestrator, Teaching Studio State, Interaction Service, Artifact Generator, Replay UX, Integration Gateway)
    - Sync vs async boundaries and failure behavior
    - Event log as source of truth
-   - Media plane integration (LiveKit Cloud) and multistream fan-out
+   - Media plane integration (LiveKit Cloud); multistream fan-out is Phase 2
 
 2) Data model & migrations
    - PostgreSQL schema that matches the spec

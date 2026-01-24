@@ -1,6 +1,8 @@
 # teaching_first_database_schema.md
 ## Teaching-First Database Schema (Draft)
 
+This file was split out from `multistream/docs/master_plan.md` solely to improve readability.
+
 This document defines the persistent truth model for a teaching-first, multi-streaming platform. It is scoped to **authoritative truth** (PostgreSQL), with explicit separation for ephemeral data (Redis) and blob storage (Object Storage).
 
 ---
@@ -109,7 +111,12 @@ This document defines the persistent truth model for a teaching-first, multi-str
 | event_type | text | e.g., `session.started`, `scene.changed` |
 | event_payload | jsonb | Immutable payload |
 | sequence | bigint | Monotonic per session |
+| idempotency_key | text | Dedupe key from write request |
 | created_at | timestamptz | |
+
+Constraints:
+- Unique `(session_id, sequence)`
+- Unique `(session_id, idempotency_key)`
 
 ---
 

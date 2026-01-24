@@ -1,6 +1,8 @@
 # teaching_first_artifact_pipeline.md
 ## Teaching-First Artifact Pipeline (Draft)
 
+This file was split out from `multistream/docs/master_plan.md` solely to improve readability.
+
 This pipeline converts live classroom activity into learning artifacts. It is **event-driven** and **artifact-centric**, built on immutable session events.
 
 ---

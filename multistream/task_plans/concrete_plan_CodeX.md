@@ -1,8 +1,7 @@
 # Concrete Build Plan - Teaching-First Multi-Streaming Platform (Managed LiveKit)
 #
-# This is a step-by-step, buildable plan derived from the master specification and
-# companion documents. It keeps the LiveKit media plane managed and local services
-# containerized for development/testing.
+This is a step-by-step, buildable plan derived from the `master_specification.md` and
+companion documents (`feature_backend_mapping.md`, `teaching_first_artifact_pipeline.md`, and `teaching_first_database_schema.md`). It keeps the LiveKit media plane managed and local services containerized for development/testing.
 
 ## 0) Decisions and scope lock
 1. Confirm managed LiveKit (LiveKit Cloud) for the media plane.

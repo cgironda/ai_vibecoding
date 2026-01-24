@@ -119,7 +119,7 @@ Use `feature_backend_mapping.md` as the source of truth. Enforce:
 - Scheduling/joining/permissions/recording: synchronous, hard-fail on error.
 - Scenes/slides/whiteboard: synchronous with safe fallback to last known state.
 - Chat/Q&A/polls/captions/notes/chapters/highlights: asynchronous, degrade gracefully.
-- Replays/multistreaming: asynchronous, replay may be delayed if needed.
+- Replays/multistreaming: asynchronous; multistreaming to external destinations is Phase 2.
 - CTAs/QR codes: synchronous with fallback to static CTA.
 
 ## 12) Replay service & UX
