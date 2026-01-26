@@ -11,7 +11,7 @@ Note: `multistream/docs/master_plan.md` is the original master plan; `multistrea
 - `multistream/docs/API_Event_Contracts.md`: human-readable API + event contracts
 - `multistream/docs/openapi.yaml`: machine-readable API spec (OpenAPI)
 - `multistream/docs/UX_Spec.md`: UX flows, screens, and acceptance criteria
-- `multistream/docs/Ops_Runbook.md`: release checks and incident playbooks
+- `multistream/docs/Ops_Runbook.md`: release checks and incident playbook
 - `multistream/docs/master_plan_complement/master_specification.md`: master teaching-first specification
 - `multistream/docs/master_plan_complement/feature_backend_mapping.md`: feature ownership and failure modes
 - `multistream/docs/master_plan_complement/teaching_first_database_schema.md`: authoritative schema
