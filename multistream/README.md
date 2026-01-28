@@ -34,6 +34,14 @@ Note: `multistream/docs/master_plan.md` is the original master plan; `multistrea
   - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`
   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`
 
+## UI routes (current)
+- `/` marketing landing (Restream Studio-style hero + preview)
+- `/login` auth entry (Sign in → `/dashboard`)
+- `/onboarding/connect` destination connect step
+- `/onboarding/permissions` device permission gate
+- `/dashboard` Restream-style app home
+- `/studio` dark studio cockpit + mock multi-person preview
+
 ## OpenAPI usage
 `multistream/docs/openapi.yaml` is the canonical API spec for tooling (docs, clients, validators).
 
