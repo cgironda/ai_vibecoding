@@ -1,8 +1,8 @@
 # Implementation Plan (Checklist Order)
 
-1. `PDR.md`
-2. `master_plan_simple.md`
-3. `plan_UI_design.md`
+1. `PDR_japan_aligned.md`
+2. `master_plan_simple_japan_aligned.md`
+3. `plan_UI_design_japan_aligned.md`
 
 Notes:
 - This plan excludes anything under `original_md_files/`.
